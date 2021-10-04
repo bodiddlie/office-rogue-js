@@ -1,13 +1,6 @@
 import * as ROT from 'rot-js';
+import { MAP_HEIGHT, MAP_WIDTH } from './constants';
 import { Menu } from './states/menu';
-
-// We'll need to use variables like MAP_WIDTH and MAP_HEIGHT across various parts
-// of our codebase as this project progresses, so let's go ahead and create a
-// "constants" object that can be easily put in its own file later.
-const constants = {
-  MAP_WIDTH: 80,
-  MAP_HEIGHT: 48,
-};
 
 class Engine {
   constructor() {
@@ -15,8 +8,8 @@ class Engine {
     // roguelike dungeon map. Set it as a property of the main Engine object so we
     // can access this Display instance from other methods.
     this.mapDisplay = new ROT.Display({
-      width: constants.MAP_WIDTH,
-      height: constants.MAP_HEIGHT,
+      width: MAP_WIDTH,
+      height: MAP_HEIGHT,
     });
 
     this.mapDisplay.setOptions({
