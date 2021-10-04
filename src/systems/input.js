@@ -9,13 +9,11 @@ const MOVE_KEYS = {
 };
 
 export function handleInput(event, entities) {
-  const player = entities.find((e) =>
-    e.components.some((c) => c instanceof Player)
-  );
+  const player = entities.find((e) => !!e.components.get(Player));
 
   const delta = MOVE_KEYS[event.key];
   if (delta) {
     const movement = new Movement(delta[0], delta[1]);
-    player.components.push(movement);
+    player.addComponent(Movement, movement);
   }
 }

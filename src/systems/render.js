@@ -10,15 +10,12 @@ export function render(display, entities) {
 }
 
 function isRenderable(entity) {
-  return (
-    entity.components.some((c) => c instanceof Sprite) &&
-    entity.components.some((c) => c instanceof Positional)
-  );
+  return !!entity.components.get(Sprite) && !!entity.components.get(Positional);
 }
 
 function getRenderComponents(entity) {
-  const positional = entity.components.find((c) => c instanceof Positional);
-  const sprite = entity.components.find((c) => c instanceof Sprite);
+  const positional = entity.components.get(Positional);
+  const sprite = entity.components.get(Sprite);
   if (positional && sprite) {
     return { positional, sprite };
   }

@@ -5,8 +5,8 @@ import { Menu } from './states/menu';
 // of our codebase as this project progresses, so let's go ahead and create a
 // "constants" object that can be easily put in its own file later.
 const constants = {
-  MAP_WIDTH: 120,
-  MAP_HEIGHT: 60,
+  MAP_WIDTH: 80,
+  MAP_HEIGHT: 48,
 };
 
 class Engine {
@@ -20,7 +20,8 @@ class Engine {
     });
 
     this.mapDisplay.setOptions({
-      fontSize: 16,
+      fontSize: 20,
+      forceSquareRatio: false,
     });
     // getContainer() returns the canvas element. We then need to use
     // appendChild() to insert the canvas into the web page "document" or our map
