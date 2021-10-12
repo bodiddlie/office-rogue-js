@@ -6,6 +6,10 @@ const MOVE_KEYS = {
   j: [0, 1],
   k: [0, -1],
   l: [1, 0],
+  ArrowLeft: [-1, 0],
+  ArrowRight: [1, 0],
+  ArrowUp: [0, -1],
+  ArrowDown: [0, 1],
 };
 
 export function handleInput(event, entities) {

@@ -11,25 +11,29 @@ import { Level } from '../world/level';
 export class Game {
   constructor(engine) {
     this.engine = engine;
-    const player = new Entity();
-    player.addComponent(Positional, new Positional(10, 10));
-    player.addComponent(Sprite, new Sprite('@', '#f00'));
-    player.addComponent(Player, new Player());
-    console.log(player);
-    this.entities = [player];
-    this.level = new Level(MAP_WIDTH, MAP_HEIGHT, this.engine.mapDisplay);
+    this.level = new Level(MAP_WIDTH, MAP_HEIGHT, this.engine.mapDisplay, 1);
+
+    this.player = new Entity();
+    this.player.addComponent(
+      Positional,
+      new Positional(this.level.playerSpawn.x, this.level.playerSpawn.y)
+    );
+    this.player.addComponent(Sprite, new Sprite('@', '#f00'));
+    this.player.addComponent(Player, new Player());
+    this.entities = [this.player];
   }
 
   update(event) {
     this.engine.mapDisplay.clear();
-
-    this.level.render();
 
     if (event) {
       handleInput(event, this.entities);
     }
     moveEntities(this.entities, this.level);
 
+    this.level.updateFov(this.player);
+
+    this.level.render();
     render(this.engine.mapDisplay, this.entities);
 
     return this;
