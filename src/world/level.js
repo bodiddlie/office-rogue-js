@@ -62,7 +62,9 @@ export class Level {
     this.display = display;
     this.width = width;
     this.height = height;
+    this.rooms = [];
     this._initMap(width, height);
+    console.table(this.rooms);
   }
 
   _initMap(width, height) {
@@ -100,11 +102,16 @@ export class Level {
     const w = x2 - x1 + 1;
     const h = y2 - y1 + 1;
 
+    let didSplit = false;
     if (w >= h && w >= STOP_WIDTH) {
       this._subdivideWidth(x1, y1, x2, y2);
+      didSplit = true;
     } else if (h >= STOP_WIDTH) {
       this._subdivideHeight(x1, y1, x2, y2);
+      didSplit = true;
     }
+
+    return didSplit;
   }
 
   _subdivideWidth(x1, y1, x2, y2) {
@@ -114,8 +121,12 @@ export class Level {
       this.map[y][x] = { ...WALL_TILE };
     }
 
-    this._subdivide(x1, y1, x - 1, y2);
-    this._subdivide(x + 1, y1, x2, y2);
+    const firstSplit = this._subdivide(x1, y1, x - 1, y2);
+    const secondSplit = this._subdivide(x + 1, y1, x2, y2);
+
+    if (!firstSplit && !secondSplit) {
+      this._addRoom(x1, y1, x2, y2);
+    }
 
     let doory = ROT.RNG.getUniformInt(y1 + 1, y2 - 1);
     while (
@@ -134,8 +145,12 @@ export class Level {
       this.map[y][x] = { ...WALL_TILE };
     }
 
-    this._subdivide(x1, y1, x2, y - 1);
-    this._subdivide(x1, y + 1, x2, y2);
+    const firstSplit = this._subdivide(x1, y1, x2, y - 1);
+    const secondSplit = this._subdivide(x1, y + 1, x2, y2);
+
+    if (!firstSplit && !secondSplit) {
+      this._addRoom(x1, y1, x2, y2);
+    }
 
     let doorx = ROT.RNG.getUniformInt(x1 + 1, x2 - 1);
     while (
@@ -145,6 +160,10 @@ export class Level {
       doorx = ROT.RNG.getUniformInt(x1 + 1, x2 - 1);
     }
     this.map[y][doorx] = { ...FLOOR_TILE };
+  }
+
+  _addRoom(x1, y1, x2, y2) {
+    this.rooms.push({ x1, y1, x2, y2 });
   }
 
   isWalkable(x, y) {
@@ -189,9 +208,7 @@ export class Level {
     }
     const fov = new ROT.FOV.PreciseShadowcasting(this.lightPasses.bind(this));
     const pos = player.components.get(Positional);
-    console.log(pos);
     fov.compute(pos.x, pos.y, 10, (x, y, r, visibility) => {
-      console.log(x, y, r, visibility);
       if (visibility) {
         this.map[y][x].isVisible = true;
         this.map[y][x].seen = true;
