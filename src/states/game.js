@@ -6,7 +6,6 @@ import { Entity } from '../entity';
 import { handleInput } from '../systems/input';
 import { moveEntities } from '../systems/movement';
 import { render } from '../systems/render';
-import { Level } from '../world/level';
 import { World } from '../world/world';
 
 export class Game {
@@ -16,11 +15,10 @@ export class Game {
     this.world = new World(MAP_WIDTH, MAP_HEIGHT, this.engine.mapDisplay, 1);
 
     this.player = new Entity();
-    // this.player.addComponent(
-    //   Positional,
-    //   new Positional(this.level.playerSpawn.x, this.level.playerSpawn.y),
-    // );
-    this.player.addComponent(Positional, new Positional(0, 0));
+    this.player.addComponent(
+      Positional,
+      new Positional(this.world.playerSpawn.x, this.world.playerSpawn.y),
+    );
     this.player.addComponent(Sprite, new Sprite('@', '#f00'));
     this.player.addComponent(Player, new Player());
     this.entities = [this.player];
@@ -32,9 +30,9 @@ export class Game {
     if (event) {
       handleInput(event, this.entities);
     }
-    moveEntities(this.entities, this.level);
+    moveEntities(this.entities, this.world);
 
-    // this.level.updateFov(this.player);
+    this.world.updateFov(this.player);
 
     this.world.render();
     // this.level.render();
