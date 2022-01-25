@@ -27,11 +27,11 @@ class Engine {
     this.state.resize();
 
     window.addEventListener('keydown', (event) => {
-      const state = this.state.update(event);
-      if (state !== this.state) {
-        this.state = state;
-        this.state.update();
-      }
+      this.update(event);
+    });
+
+    window.addEventListener('touchend', (event) => {
+      this.update(event);
     });
 
     window.addEventListener('resize', (event) => {
@@ -40,6 +40,14 @@ class Engine {
     });
 
     this.state = this.state.update();
+  }
+
+  update(event) {
+    const state = this.state.update(event);
+    if (state !== this.state) {
+      this.state = state;
+      this.state.update();
+    }
   }
 
   fit() {

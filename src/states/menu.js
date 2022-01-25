@@ -11,8 +11,16 @@ export class Menu {
   update(event) {
     this.engine.mapDisplay.clear();
 
-    if (event && event.code === 'KeyN') {
-      return new Game(this.engine);
+    if (event) {
+      if (event instanceof KeyboardEvent) {
+        if (event.code === 'KeyN') {
+          return new Game(this.engine);
+        }
+      } else if (event instanceof TouchEvent) {
+        if (event.touches.length === 0) {
+          return new Game(this.engine);
+        }
+      }
     }
 
     this.drawMenu();
