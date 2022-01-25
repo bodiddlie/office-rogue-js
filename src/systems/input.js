@@ -1,6 +1,5 @@
 import { Movement } from '../components/movement';
 import { Player } from '../components/player';
-import { Positional } from '../components/positional';
 
 const MOVE_KEYS = {
   h: [-1, 0],
