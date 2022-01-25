@@ -34,10 +34,11 @@ export class Game {
 
     this.world.updateFov(this.player);
 
-    this.world.render();
-    // this.level.render();
-    render(this.engine.mapDisplay, this.entities);
+    this.world.render(this.player.components.get(Positional));
+    render(this.engine.mapDisplay, this.entities, this.world);
 
     return this;
   }
+
+  resize() {}
 }

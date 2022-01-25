@@ -1,4 +1,5 @@
 import { Game } from './game';
+import { getDisplayOptions } from '../index';
 
 const OPTIONS = ['[N] Play a new game'];
 
@@ -14,15 +15,24 @@ export class Menu {
       return new Game(this.engine);
     }
 
+    this.drawMenu();
+
+    return this;
+  }
+
+  resize() {
+    this.drawMenu();
+  }
+
+  drawMenu() {
+    this.engine.mapDisplay.clear();
     OPTIONS.forEach((o, i) => {
-      const { width, height } = this.engine.mapDisplay.getOptions();
+      const { width, height } = getDisplayOptions();
       const x = Math.floor(width / 2);
       const y = Math.floor(height / 2 - 1 + i);
 
       this.engine.mapDisplay.draw(x, y, o, '#fff');
     });
-
-    return this;
   }
 
   processInput(event) {}

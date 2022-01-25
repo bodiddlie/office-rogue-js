@@ -1,28 +1,30 @@
 import * as ROT from 'rot-js';
-import { MAP_HEIGHT, MAP_WIDTH } from './constants';
 import { Menu } from './states/menu';
+
+import './app.css';
+import Point from './util/point';
+
+let options = {
+  width: 1,
+  height: 1,
+  fontSize: 22,
+  fontFamily: 'metrickal, droid sans mono, monospace',
+};
+
+export function getDisplayOptions() {
+  return { ...options };
+}
 
 class Engine {
   constructor() {
-    // Create a rot.js canvas interface which we'll be using to render our
-    // roguelike dungeon map. Set it as a property of the main Engine object so we
-    // can access this Display instance from other methods.
-    this.mapDisplay = new ROT.Display({
-      width: MAP_WIDTH,
-      height: MAP_HEIGHT,
-    });
+    this.mapDisplay = new ROT.Display(options);
 
-    this.mapDisplay.setOptions({
-      fontSize: 20,
-      forceSquareRatio: false,
-    });
-    // getContainer() returns the canvas element. We then need to use
-    // appendChild() to insert the canvas into the web page "document" or our map
-    // will not be displayed.
-    document.querySelector('#root').appendChild(this.mapDisplay.getContainer());
+    this.parent = document.querySelector('#map');
+    this.parent.appendChild(this.mapDisplay.getContainer());
 
-    // Print a test message in the upper-left corner of the display.
     this.state = new Menu(this);
+    this.fit();
+    this.state.resize();
 
     window.addEventListener('keydown', (event) => {
       const state = this.state.update(event);
@@ -32,7 +34,31 @@ class Engine {
       }
     });
 
+    window.addEventListener('resize', (event) => {
+      this.fit();
+      this.state.resize();
+    });
+
     this.state = this.state.update();
+  }
+
+  fit() {
+    let node = this.mapDisplay.getContainer();
+    let available = new Point(
+      this.parent.offsetWidth,
+      this.parent.offsetHeight,
+    );
+    let size = this.mapDisplay.computeSize(available.x, available.y);
+    size[0] += size[0] % 2 ? 2 : 1;
+    size[1] += size[1] % 2 ? 2 : 1;
+    options.width = size[0];
+    options.height = size[1];
+    this.mapDisplay.setOptions(options);
+
+    let current = new Point(node.offsetWidth, node.offsetHeight);
+    let offset = available.minus(current).scale(0.5);
+    node.style.left = `${offset.x}px`;
+    node.style.top = `${offset.y}px`;
   }
 }
 

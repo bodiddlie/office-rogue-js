@@ -1,2 +1,2 @@
-export const MAP_WIDTH = 80;
-export const MAP_HEIGHT = 40;
+export const MAP_WIDTH = 200;
+export const MAP_HEIGHT = 200;

@@ -1,12 +1,21 @@
 import { Positional } from '../components/positional';
 import { Sprite } from '../components/sprite';
 
-export function render(display, entities) {
+export function render(display, entities, level) {
   const renderableEntities = entities.filter(isRenderable);
-  renderableEntities.forEach((e) => {
-    const { positional, sprite } = getRenderComponents(e);
-    display.draw(positional.x, positional.y, sprite.char, sprite.fg, sprite.bg);
-  });
+  renderableEntities
+    .filter((e) => level.isEntityVisible(e))
+    .forEach((e) => {
+      const { positional, sprite } = getRenderComponents(e);
+      const { startX, startY } = level.getScreenBounds();
+      display.draw(
+        positional.x - startX,
+        positional.y - startY,
+        sprite.char,
+        sprite.fg,
+        sprite.bg,
+      );
+    });
 }
 
 function isRenderable(entity) {

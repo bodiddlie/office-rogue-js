@@ -1,8 +1,10 @@
 import * as ROT from 'rot-js';
 import { ENTER_TILE, FLOOR_TILE, STAIR_DOWN, WALL_TILE } from './tiles';
 import { Positional } from '../components/positional';
+import { getDisplayOptions } from '../index';
+import Point from '../util/point';
 
-const STOP_SIZE = 12;
+const STOP_SIZE = 25;
 
 class Leaf {
   constructor(x, y, w, h) {
@@ -105,6 +107,7 @@ export class World {
     this.display = display;
     this.width = width;
     this.height = height;
+    this.cameraPosition = new Point();
     this._initMap(width, height);
   }
 
@@ -198,6 +201,7 @@ export class World {
     }
     const fov = new ROT.FOV.PreciseShadowcasting(this.lightPasses.bind(this));
     const pos = player.components.get(Positional);
+    this.cameraPosition = new Point(pos.x, pos.y);
     fov.compute(pos.x, pos.y, 10, (x, y, r, visibility) => {
       if (visibility) {
         this.map[y][x].isVisible = true;
@@ -211,16 +215,64 @@ export class World {
     return this.rooms[index].getRandomPos();
   }
 
+  isEntityVisible(entity) {
+    const positional = entity.components.get(Positional);
+    const { startX, endX, startY, endY } = this.getScreenBounds();
+    return (
+      positional.x >= startX &&
+      positional.x < endX &&
+      positional.y >= startY &&
+      positional.y < endY
+    );
+  }
+
+  getScreenBounds() {
+    const opts = getDisplayOptions();
+    const halfHeight = Math.floor(opts.height / 2);
+    const halfWidth = Math.floor(opts.width / 2);
+    const startY = this.cameraPosition.y - halfHeight;
+    const endY = this.cameraPosition.y + halfHeight;
+    const startX = this.cameraPosition.x - halfWidth;
+    const endX = this.cameraPosition.x + halfWidth;
+    return { startX, endX, startY, endY };
+  }
+
   render() {
-    // this.leaf.render(this.display);
-    this.map.forEach((row, y) => {
-      row.forEach((tile, x) => {
-        if (tile.isVisible) {
-          this.display.draw(x, y, tile.char, tile.fg, tile.bg);
-        } else if (tile.seen) {
-          this.display.draw(x, y, tile.char, tile.fogFg, tile.fogBg);
+    const { startX, endX, startY, endY } = this.getScreenBounds();
+    for (let y = startY; y <= endY; y++) {
+      for (let x = startX; x <= endX; x++) {
+        const row = this.map[y];
+        if (!row) continue;
+        const tile = row[x];
+        if (tile) {
+          if (tile.isVisible) {
+            this.display.draw(
+              x - startX,
+              y - startY,
+              tile.char,
+              tile.fg,
+              tile.bg,
+            );
+          } else if (tile.seen) {
+            this.display.draw(
+              x - startX,
+              y - startY,
+              tile.char,
+              tile.fogFg,
+              tile.fogBg,
+            );
+          }
         }
-      });
-    });
+      }
+    }
+    // this.map.forEach((row, y) => {
+    //   row.forEach((tile, x) => {
+    //     if (tile.isVisible) {
+    //       this.display.draw(x, y, tile.char, tile.fg, tile.bg);
+    //     } else if (tile.seen) {
+    //       this.display.draw(x, y, tile.char, tile.fogFg, tile.fogBg);
+    //     }
+    //   });
+    // });
   }
 }

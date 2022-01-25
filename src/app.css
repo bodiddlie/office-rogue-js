@@ -1,0 +1,7 @@
+body {
+    margin: 0;
+}
+#map {
+    width: calc(75%);
+    height: calc(100vh - 10rem);
+}
