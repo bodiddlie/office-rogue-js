@@ -1,5 +1,6 @@
 import { Movement } from '../components/movement';
 import { Player } from '../components/player';
+import { Positional } from '../components/positional';
 
 const MOVE_KEYS = {
   h: [-1, 0],
@@ -17,11 +18,29 @@ const MOVE_KEYS = {
 };
 
 export function handleInput(event, entities) {
-  const player = entities.find((e) => !!e.components.get(Player));
+  let delta;
+  if (event instanceof TouchEvent) {
+    delta = handleTouches(event, entities);
+  } else if (event instanceof KeyboardEvent) {
+    delta = MOVE_KEYS[event.key];
+  }
 
-  const delta = MOVE_KEYS[event.key];
   if (delta) {
+    const player = entities.find((e) => !!e.components.get(Player));
     const movement = new Movement(delta[0], delta[1]);
     player.addComponent(Movement, movement);
+  }
+}
+
+function handleTouches(event, entities) {
+  const cx = window.innerWidth / 2;
+  const cy = window.innerHeight / 2;
+  const dx = event.changedTouches[0].clientX - cx;
+  const dy = event.changedTouches[0].clientY - cy;
+
+  if (Math.abs(dx) > Math.abs(dy)) {
+    return [Math.sign(dx), 0];
+  } else {
+    return [0, Math.sign(dy)];
   }
 }
