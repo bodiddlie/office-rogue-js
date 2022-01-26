@@ -33,6 +33,7 @@ class Engine {
     this.touchStart = null;
 
     this.parent.addEventListener('touchstart', (event) => {
+      event.preventDefault();
       if (event.touches.length > 1) {
         this.touchStart = null;
         return;
@@ -41,7 +42,12 @@ class Engine {
       this.touchStart = event.touches[0];
     });
 
+    this.parent.addEventListener('touchmove', (event) => {
+      event.preventDefault();
+    });
+
     this.parent.addEventListener('touchend', (event) => {
+      event.preventDefault();
       if (!this.touchStart) return;
       event._touchStart = this.touchStart;
       this.update(event);
