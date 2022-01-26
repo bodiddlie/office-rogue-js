@@ -16,10 +16,12 @@ const MOVE_KEYS = {
   ArrowDown: [0, 1],
 };
 
+const SWIPE_THRESHOLD = 25;
+
 export function handleInput(event, entities) {
   let delta;
   if (event instanceof TouchEvent) {
-    delta = handleTouches(event, entities);
+    delta = handleTouches(event);
   } else if (event instanceof KeyboardEvent) {
     delta = MOVE_KEYS[event.key];
   }
@@ -31,15 +33,32 @@ export function handleInput(event, entities) {
   }
 }
 
-function handleTouches(event, entities) {
-  const cx = window.innerWidth / 2;
-  const cy = window.innerHeight / 2;
-  const dx = event.changedTouches[0].clientX - cx;
-  const dy = event.changedTouches[0].clientY - cy;
+function handleTouches(event) {
+  const deltaX = event.changedTouches[0].clientX - event._touchStart.clientX;
+  const deltaY = event.changedTouches[0].clientY - event._touchStart.clientY;
 
-  if (Math.abs(dx) > Math.abs(dy)) {
-    return [Math.sign(dx), 0];
+  if (
+    Math.abs(deltaX) > SWIPE_THRESHOLD ||
+    Math.abs(deltaY) > SWIPE_THRESHOLD
+  ) {
+    if (Math.abs(deltaX) > Math.abs(deltaY)) {
+      //horizontal swipe
+      return [Math.sign(deltaX), 0];
+    } else {
+      //vertical swipe
+      return [0, Math.sign(deltaY)];
+    }
   } else {
-    return [0, Math.sign(dy)];
+    const map = document.querySelector('#map');
+    const cx = map.offsetWidth / 2;
+    const cy = map.offsetHeight / 2;
+    const dx = event.changedTouches[0].clientX - cx;
+    const dy = event.changedTouches[0].clientY - cy;
+
+    if (Math.abs(dx) > Math.abs(dy)) {
+      return [Math.sign(dx), 0];
+    } else {
+      return [0, Math.sign(dy)];
+    }
   }
 }

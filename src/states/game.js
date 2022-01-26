@@ -11,7 +11,6 @@ import { World } from '../world/world';
 export class Game {
   constructor(engine) {
     this.engine = engine;
-    // this.level = new Level(MAP_WIDTH, MAP_HEIGHT, this.engine.mapDisplay, 1);
     this.world = new World(MAP_WIDTH, MAP_HEIGHT, this.engine.mapDisplay, 1);
 
     this.player = new Entity();

@@ -30,7 +30,20 @@ class Engine {
       this.update(event);
     });
 
-    window.addEventListener('touchend', (event) => {
+    this.touchStart = null;
+
+    this.parent.addEventListener('touchstart', (event) => {
+      if (event.touches.length > 1) {
+        this.touchStart = null;
+        return;
+      }
+
+      this.touchStart = event.touches[0];
+    });
+
+    this.parent.addEventListener('touchend', (event) => {
+      if (!this.touchStart) return;
+      event._touchStart = this.touchStart;
       this.update(event);
     });
 

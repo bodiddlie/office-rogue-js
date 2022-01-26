@@ -4,7 +4,7 @@ import { Positional } from '../components/positional';
 import { getDisplayOptions } from '../index';
 import Point from '../util/point';
 
-const STOP_SIZE = 25;
+const STOP_SIZE = 16;
 
 class Leaf {
   constructor(x, y, w, h) {
