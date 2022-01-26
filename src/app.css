@@ -1,7 +1,16 @@
 body {
     margin: 0;
     overscroll-behavior: contain;
+    overflow: hidden;
 }
+
+#container {
+    height: 100vh;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    width: 100%;
+}
+
 #map {
     width: calc(75%);
     height: calc(100vh - 10rem);
