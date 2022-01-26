@@ -39,6 +39,11 @@ class Engine {
       this.state.resize();
     });
 
+    document.addEventListener('click', (event) => {
+      event.preventDefault();
+      event.stopPropagation();
+    });
+
     this.state = this.state.update();
   }
 
